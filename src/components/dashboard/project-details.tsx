@@ -21,12 +21,45 @@ import {
   Shield,
   FileText,
   Activity,
-  RefreshCw
+  RefreshCw,
+  Edit,
+  Trash2,
+  Plus
 } from "lucide-react"
 import { ProjectDetailsHeader } from "./project-details-header"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
 
 interface ProjectDetailsProps {
   projectId: string
+}
+
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'completed':
+      return 'bg-green-100 text-green-800'
+    case 'in-progress':
+      return 'bg-blue-100 text-blue-800'
+    case 'upcoming':
+      return 'bg-gray-100 text-gray-800'
+    case 'delayed':
+      return 'bg-red-100 text-red-800'
+    default:
+      return 'bg-gray-100 text-gray-800'
+  }
+}
+
+const getPriorityColor = (priority: string) => {
+  switch (priority) {
+    case 'high':
+      return 'bg-red-100 text-red-800'
+    case 'medium':
+      return 'bg-yellow-100 text-yellow-800'
+    case 'low':
+      return 'bg-green-100 text-green-800'
+    default:
+      return 'bg-gray-100 text-gray-800'
+  }
 }
 
 export function ProjectDetails({ projectId }: ProjectDetailsProps) {
@@ -34,6 +67,13 @@ export function ProjectDetails({ projectId }: ProjectDetailsProps) {
   const [milestones, setMilestones] = useState<Milestone[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
+  const [formData, setFormData] = useState({
+    startDate: '',
+    endDate: '',
+    nextMilestone: '',
+    milestoneDate: ''
+  })
+  const [showMilestoneForm, setShowMilestoneForm] = useState(false)
 
   const fetchProject = async () => {
     try {
@@ -154,6 +194,22 @@ export function ProjectDetails({ projectId }: ProjectDetailsProps) {
 
   const budgetVariance = project.budgetPlanned - project.budgetActual
   const budgetVariancePercent = ((project.budgetActual / project.budgetPlanned) * 100).toFixed(1)
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+  }
+
+  const handleAddMilestone = () => {
+    setShowMilestoneForm(true)
+  }
+
+  const handleEditMilestone = (milestone: any) => {
+    // Implement the logic to edit a milestone
+  }
+
+  const handleDeleteMilestone = (id: string) => {
+    // Implement the logic to delete a milestone
+  }
 
   return (
     <div className="space-y-6">
@@ -291,84 +347,84 @@ export function ProjectDetails({ projectId }: ProjectDetailsProps) {
           </div>
         </TabsContent>
 
-        <TabsContent value="timeline" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Project Timeline & Milestones</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {/* Project Timeline */}
-                <div className="space-y-3">
-                  <h4 className="font-medium">Project Timeline</h4>
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
-                    <div>
-                      <h5 className="font-medium">Project Start</h5>
-                      <p className="text-sm text-muted-foreground">{formatDate(project.startDate)}</p>
+        <TabsContent value="timeline" className="space-y-4">
+          <div className="space-y-6">
+            {/* Unified Timeline */}
+            <div className="space-y-0">
+              {[
+                {
+                  type: "start",
+                  name: "Project Start",
+                  description: "",
+                  date: project.startDate,
+                  status: "completed",
+                },
+                ...milestones.map(m => ({
+                  type: "milestone",
+                  id: m.id,
+                  name: m.name,
+                  description: m.description,
+                  date: m.startDate,
+                  endDate: m.endDate,
+                  status: m.status,
+                  priority: m.priority,
+                  progress: m.progress,
+                })),
+                {
+                  type: "end",
+                  name: "Project End",
+                  description: "",
+                  date: project.endDate,
+                  status: "planned",
+                }
+              ]
+                .sort((a, b) => new Date(a.date || "").getTime() - new Date(b.date || "").getTime())
+                .map((event, idx, arr) => (
+                  <div key={event.id || idx} className="flex items-start gap-4 py-4 border-b last:border-b-0">
+                    {/* Timeline Dot and Connector */}
+                    <div className="flex flex-col items-center">
+                      <div className={`w-3 h-3 rounded-full ${event.type === "milestone" ? "bg-blue-500" : "bg-gray-400"}`}></div>
+                      {idx !== arr.length - 1 && (
+                        <div className="w-px h-8 bg-gray-200"></div>
+                      )}
                     </div>
-                    <Badge variant="outline">Completed</Badge>
-                  </div>
-                  
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
-                    <div>
-                      <h5 className="font-medium">{project.nextMilestone}</h5>
-                      <p className="text-sm text-muted-foreground">{formatDate(project.milestoneDate)}</p>
-                    </div>
-                    <Badge variant="outline">Upcoming</Badge>
-                  </div>
-                  
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
-                    <div>
-                      <h5 className="font-medium">Project End</h5>
-                      <p className="text-sm text-muted-foreground">{formatDate(project.endDate)}</p>
-                    </div>
-                    <Badge variant="outline">Planned</Badge>
-                  </div>
-                </div>
-
-                {/* Milestones List */}
-                <div className="space-y-3">
-                  <h4 className="font-medium">All Milestones ({milestones.length})</h4>
-                  {milestones.length === 0 ? (
-                    <div className="text-center py-8 text-muted-foreground">
-                      No milestones found for this project
-                    </div>
-                  ) : (
-                    milestones.map(milestone => (
-                      <div key={milestone.id} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <div>
-                            <h5 className="font-medium">{milestone.name}</h5>
-                            <p className="text-sm text-muted-foreground">{milestone.description}</p>
-                            <div className="flex items-center gap-2 mt-1">
-                              <Badge className={milestone.status === 'completed' ? 'bg-green-100 text-green-800' : 
-                                               milestone.status === 'in-progress' ? 'bg-blue-100 text-blue-800' :
-                                               milestone.status === 'delayed' ? 'bg-red-100 text-red-800' : 
-                                               'bg-gray-100 text-gray-800'}>
-                                {milestone.status.replace('-', ' ')}
-                              </Badge>
-                              <Badge className={milestone.priority === 'high' ? 'bg-red-100 text-red-800' :
-                                               milestone.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                                               'bg-green-100 text-green-800'}>
-                                {milestone.priority}
-                              </Badge>
-                              <span className="text-xs text-muted-foreground">
-                                {formatDate(milestone.startDate)} - {formatDate(milestone.endDate)}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-sm text-muted-foreground">Progress</div>
-                          <div className="font-medium">{milestone.progress}%</div>
-                        </div>
+                    {/* Event Content */}
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <h5 className="font-medium">{event.name}</h5>
+                        {event.type === "milestone" && (
+                          <>
+                            <Badge className={getStatusColor(event.status)}>
+                              {event.status.replace('-', ' ')}
+                            </Badge>
+                            <Badge className={getPriorityColor(event.priority)}>
+                              {event.priority}
+                            </Badge>
+                          </>
+                        )}
                       </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                      {event.description && (
+                        <p className="text-sm text-muted-foreground">{event.description}</p>
+                      )}
+                      <div className="text-xs text-muted-foreground mt-1">
+                        {event.type === "milestone" && 'endDate' in event && event.endDate
+                          ? <>{event.date} - {event.endDate}</>
+                          : event.type === "milestone" && event.date
+                            ? <>{event.date}</>
+                            : event.date && <>{formatDate(event.date)}</>}
+                      </div>
+                      {event.type === "milestone" && (
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs text-muted-foreground">
+                            Progress <span className="font-medium">{event.progress}%</span>
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
         </TabsContent>
 
         <TabsContent value="budget" className="space-y-6">
@@ -458,7 +514,13 @@ export function ProjectDetails({ projectId }: ProjectDetailsProps) {
                     <Users className="h-4 w-4 text-muted-foreground" />
                     Core Team
                   </h4>
-                  <p className="text-sm text-muted-foreground">{project.coreTeam}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {/* Map coreTeam IDs to names and join with commas */}
+                    {project.coreTeam.map(id => {
+                      const member = project.teamMembers.find(m => m.id === id)
+                      return member ? member.name : id
+                    }).join(", ")}
+                  </p>
                 </div>
                 <div>
                   <h4 className="font-medium flex items-center gap-2">

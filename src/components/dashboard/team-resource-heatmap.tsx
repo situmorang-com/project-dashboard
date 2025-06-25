@@ -176,12 +176,7 @@ export function TeamResourceHeatmap() {
                     <th className="text-left p-2 font-medium">Team Member</th>
                     <th className="text-left p-2 font-medium">Role</th>
                     <th className="text-left p-2 font-medium">Department</th>
-                    {resourceData.weeks.map(week => (
-                      <th key={week} className="text-center p-2 font-medium text-sm">
-                        {week}
-                      </th>
-                    ))}
-                    <th className="text-center p-2 font-medium">Avg</th>
+                    <th className="text-center p-2 font-medium">Project Count</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -195,19 +190,9 @@ export function TeamResourceHeatmap() {
                       </td>
                       <td className="p-2 text-sm">{member.role}</td>
                       <td className="p-2 text-sm">{member.department}</td>
-                      {resourceData.weeks.map(week => {
-                        const load = resourceData.utilizationData[member.id][week]
-                        return (
-                          <td key={week} className="p-2 text-center">
-                            <div className={`inline-block w-8 h-8 rounded text-xs font-medium flex items-center justify-center ${getHeatMapColor(load)}`}>
-                              {load}%
-                            </div>
-                          </td>
-                        )
-                      })}
                       <td className="p-2 text-center">
-                        <div className={`inline-block px-2 py-1 rounded text-xs font-medium ${getHeatMapColor(getAverageLoad(member.id))}`}>
-                          {getAverageLoad(member.id)}%
+                        <div className={`inline-block px-2 py-1 rounded text-xs font-medium ${getHeatMapColor(member.projects.length)}`}>
+                          {member.projects.length}
                         </div>
                       </td>
                     </tr>
@@ -221,23 +206,15 @@ export function TeamResourceHeatmap() {
               <span className="font-medium">Legend:</span>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 bg-green-400 rounded"></div>
-                <span>0-59% (Normal)</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-blue-400 rounded"></div>
-                <span>60-69% (Moderate)</span>
+                <span>1-2 Projects</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 bg-yellow-400 rounded"></div>
-                <span>70-79% (High)</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-orange-400 rounded"></div>
-                <span>80-89% (Very High)</span>
+                <span>3-4 Projects</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 bg-red-500 rounded"></div>
-                <span>90%+ (Overloaded)</span>
+                <span>5+ Projects</span>
               </div>
             </div>
           </div>

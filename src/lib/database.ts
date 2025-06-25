@@ -179,7 +179,7 @@ function insertInitialProjects() {
       riskLevel: "medium",
       topRisks: "Integration complexity with legacy systems",
       keyDependencies: "Vendor delivery timeline",
-      coreTeam: "12 members",
+      coreTeam: ["tm1", "tm2"],
       resourceLoad: 78,
       lastUpdated: "2024-07-01",
       nextSteeringCommittee: "2024-07-15",
@@ -204,7 +204,7 @@ function insertInitialProjects() {
       riskLevel: "high",
       topRisks: "User feedback integration delays",
       keyDependencies: "Design system completion",
-      coreTeam: "8 members",
+      coreTeam: ["tm3"],
       resourceLoad: 92,
       lastUpdated: "2024-07-02",
       nextSteeringCommittee: "2024-07-10",
@@ -229,7 +229,7 @@ function insertInitialProjects() {
       riskLevel: "high",
       topRisks: "Data governance approval pending",
       keyDependencies: "Security team sign-off",
-      coreTeam: "6 members",
+      coreTeam: ["tm4"],
       resourceLoad: 45,
       lastUpdated: "2024-06-28",
       nextSteeringCommittee: "2024-07-08",
@@ -254,7 +254,7 @@ function insertInitialProjects() {
       riskLevel: "low",
       topRisks: "App store approval process",
       keyDependencies: "Third-party API integration",
-      coreTeam: "10 members",
+      coreTeam: ["tm5"],
       resourceLoad: 85,
       lastUpdated: "2024-07-03",
       nextSteeringCommittee: "2024-07-20",
@@ -279,7 +279,7 @@ function insertInitialProjects() {
       riskLevel: "low",
       topRisks: "Regulatory compliance updates",
       keyDependencies: "External auditor availability",
-      coreTeam: "5 members",
+      coreTeam: ["tm6"],
       resourceLoad: 60,
       lastUpdated: "2024-07-01",
       nextSteeringCommittee: "2024-07-12",
@@ -304,7 +304,7 @@ function insertInitialProjects() {
       riskLevel: "high",
       topRisks: "Vendor selection delays",
       keyDependencies: "Stakeholder alignment",
-      coreTeam: "15 members",
+      coreTeam: ["tm7"],
       resourceLoad: 70,
       lastUpdated: "2024-07-01",
       nextSteeringCommittee: "2024-07-18",
@@ -329,7 +329,7 @@ function insertInitialProjects() {
       riskLevel: "medium",
       topRisks: "AI model accuracy requirements",
       keyDependencies: "Data pipeline completion",
-      coreTeam: "8 members",
+      coreTeam: ["tm8"],
       resourceLoad: 95,
       lastUpdated: "2024-07-02",
       nextSteeringCommittee: "2024-07-25",
@@ -354,7 +354,7 @@ function insertInitialProjects() {
       riskLevel: "low",
       topRisks: "Construction permit delays",
       keyDependencies: "Landlord approval",
-      coreTeam: "4 members",
+      coreTeam: ["tm9"],
       resourceLoad: 55,
       lastUpdated: "2024-07-01",
       nextSteeringCommittee: "2024-07-30",
@@ -370,7 +370,7 @@ function insertInitialProjects() {
         project.progress, project.nextMilestone, project.milestoneDate,
         project.status, project.healthScore, project.daysToDue,
         project.budgetPlanned, project.budgetActual, project.riskLevel,
-        project.topRisks, project.keyDependencies, project.coreTeam,
+        project.topRisks, project.keyDependencies, JSON.stringify(project.coreTeam),
         project.resourceLoad, project.lastUpdated, project.nextSteeringCommittee,
         project.stakeholders
       )
@@ -611,7 +611,7 @@ export interface Project {
   riskLevel: 'high' | 'medium' | 'low'
   topRisks: string
   keyDependencies: string
-  coreTeam: string
+  coreTeam: string[]
   resourceLoad: number
   lastUpdated: string
   nextSteeringCommittee: string
@@ -677,7 +677,7 @@ export const projectOperations = {
       project.progress, project.nextMilestone, project.milestoneDate,
       project.status, project.healthScore, project.daysToDue,
       project.budgetPlanned, project.budgetActual, project.riskLevel,
-      project.topRisks, project.keyDependencies, project.coreTeam,
+      project.topRisks, project.keyDependencies, JSON.stringify(project.coreTeam),
       project.resourceLoad, project.lastUpdated, project.nextSteeringCommittee,
       project.stakeholders
     )
@@ -702,7 +702,7 @@ export const projectOperations = {
       project.progress, project.nextMilestone, project.milestoneDate,
       project.status, project.healthScore, project.daysToDue,
       project.budgetPlanned, project.budgetActual, project.riskLevel,
-      project.topRisks, project.keyDependencies, project.coreTeam,
+      project.topRisks, project.keyDependencies, JSON.stringify(project.coreTeam),
       project.resourceLoad, project.lastUpdated, project.nextSteeringCommittee,
       project.stakeholders, project.id
     )

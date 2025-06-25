@@ -138,7 +138,7 @@ export function EditProjectDialog({ project, open, onOpenChange, onProjectUpdate
 
       // For new milestones, don't send an ID (let the database generate one)
       if (!editingMilestoneId) {
-        delete milestoneData.id
+        delete (milestoneData as any).id
       }
 
       const url = editingMilestoneId 
@@ -351,23 +351,6 @@ export function EditProjectDialog({ project, open, onOpenChange, onProjectUpdate
                     type="date"
                     value={formData.endDate || ''}
                     onChange={(e) => handleInputChange('endDate', e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="nextMilestone">Next Milestone</Label>
-                  <Input
-                    id="nextMilestone"
-                    value={formData.nextMilestone || ''}
-                    onChange={(e) => handleInputChange('nextMilestone', e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="milestoneDate">Milestone Date</Label>
-                  <Input
-                    id="milestoneDate"
-                    type="date"
-                    value={formData.milestoneDate || ''}
-                    onChange={(e) => handleInputChange('milestoneDate', e.target.value)}
                   />
                 </div>
               </div>
@@ -592,11 +575,20 @@ export function EditProjectDialog({ project, open, onOpenChange, onProjectUpdate
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="coreTeam">Core Team</Label>
-                <Input
-                  id="coreTeam"
-                  value={formData.coreTeam || ''}
-                  onChange={(e) => handleInputChange('coreTeam', e.target.value)}
-                />
+                <Select
+                  multiple
+                  value={formData.coreTeam || []}
+                  onValueChange={(value) => handleInputChange('coreTeam', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {teamMembers.map(tm => (
+                      <SelectItem key={tm.id} value={tm.id}>{tm.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="resourceLoad">Resource Load (%)</Label>

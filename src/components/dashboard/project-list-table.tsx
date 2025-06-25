@@ -389,7 +389,7 @@ export function ProjectListTable() {
                           <div>
                             <h4 className="font-medium text-sm mb-2">Core Team</h4>
                             <div className="text-sm">
-                              {project.coreTeam}
+                              {project.coreTeam.join(", ")}
                             </div>
                           </div>
 
